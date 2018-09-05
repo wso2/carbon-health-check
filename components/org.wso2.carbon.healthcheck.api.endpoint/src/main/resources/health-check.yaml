@@ -1,0 +1,125 @@
+swagger: '2.0'
+######################################################
+# Prolog
+######################################################
+info:
+  version: "1.0.0"
+  title: "WSO2 health check Rest API "
+  description: |
+    This document specifies a **carbon health check RESTfulAPI** for WSO2 carbon based products .
+
+    It is written with [swagger 2](http://swagger.io/).
+
+  contact:
+    name: "WSO2"
+    url: "http://wso2.com/products/carbon/"
+    email: "architecture@wso2.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+######################################################
+# The fixed parts of the URLs of the API
+######################################################
+
+# The schemes supported by the API
+schemes:
+  - https
+
+# The domain of the API.
+# This is configured by the customer during deployment.
+# The given host is just an example.
+# host: apis.is.com
+
+# The base path of the API.
+# Will be prefixed to all paths.
+basePath: /api/health-check/v1.0
+
+# The following media types can be passed as input in message bodies of the API.
+# The actual media type must be specified in the Content-Type header field of the request.
+# The default is json, i.e. the Content-Type header is not needed to
+# be set, but supporting it serves extensibility.
+consumes:
+  - application/json
+
+# The following media types may be passed as output in message bodies of the API.
+# The media type(s) consumable by the requester is specified in the Accept header field
+# of the corresponding request.
+# The actual media type returned will be specified in the Content-Type header field
+# of the of the response.
+# The default of the Accept header is json, i.e. there is not needed to
+# set the value, but supporting it serves extensibility.
+produces:
+  - application/json
+paths:
+  # Endpoint used to add Identity Providers
+  "/health":
+    get:
+      description: |
+        This API check the health of a carbon product.
+      x-wso2-request: |
+        curl -k -v https://localhost:9443/api/health-check/v1.0/health
+      x-wso2-curl: |
+        curl -k -v https://localhost:9443/api/health-check/v1.0/health
+      x-wso2-response: |
+        {"health":[{"key":"jdbc/WSO2CarbonDB.active.connection.count","value":"1"},{"key":"jdbc/WSO2MetricsDB.connectivityTime.ms","value":"0"},{"key":"jdbc/WSO2MetricsDB.active.connection.count","value":"1"},{"key":"jdbc/WSO2CarbonDB.connectivityTime.ms","value":"71"}]}
+      summary: |
+        List of key value pairs which contains responses from each heath checker.
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/HealthCheckResponse'
+        503:
+          description: Service Not Avaialable
+          schema:
+             $ref: '#/definitions/Errors'
+      tags:
+        - Health Check
+
+definitions:
+#-----------------------------------------------------
+# The Error Response  object
+#-----------------------------------------------------
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      description:
+        type: string
+
+#-----------------------------------------------------
+# The Property  object
+#-----------------------------------------------------
+  Property:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+#-----------------------------------------------------
+# The Authenticator Property  object
+#-----------------------------------------------------
+  HealthCheckResponse:
+    type: object
+    properties:
+      health:
+        type: array
+        items:
+          $ref: '#/definitions/Property'
+
+#-----------------------------------------------------
+# Erros
+#-----------------------------------------------------
+  Errors:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/Error'
