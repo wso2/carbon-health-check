@@ -41,7 +41,7 @@
     </modules>
 
     <scm>
-        <url>https://github.com/wso2/carbon-consent-management.git</url>
+        <url>https://github.com/wso2/carbon-health-check.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-health-check.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-health-check.git</connection>
         <tag>HEAD</tag>
