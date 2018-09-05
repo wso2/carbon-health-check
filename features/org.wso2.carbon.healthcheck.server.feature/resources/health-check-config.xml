@@ -19,7 +19,7 @@
 
     <CarbonHealthCheckConfigs>
 
-        <Enable>true</Enable>
+        <Enable>false</Enable>
 
         <HealthCheckers>
             <HealthChecker name="DataSourceHealthChecker" orderId="97" enable="true">
