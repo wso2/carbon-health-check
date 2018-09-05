@@ -40,6 +40,13 @@
         <module>features/org.wso2.carbon.healthcheck.server.feature</module>
     </modules>
 
+    <scm>
+        <url>https://github.com/wso2/carbon-consent-management.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/carbon-health-check.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/carbon-health-check.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
     <repositories>
         <repository>
             <id>wso2-nexus</id>
