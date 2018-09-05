@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Keeps data and services which are acquired through OSGI.
+ */
 public class HealthMonitorServiceDataHolder {
 
     private IServerAdmin serverAdmin;

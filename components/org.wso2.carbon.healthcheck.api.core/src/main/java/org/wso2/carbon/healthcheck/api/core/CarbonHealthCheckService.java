@@ -79,7 +79,7 @@ public class CarbonHealthCheckService {
             if (healthChecker != null && healthChecker.isEnabled()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Executing health checker: " + healthChecker.getName() + " with order: " +
-                            +healthChecker.getOrder());
+                            healthChecker.getOrder());
                 }
                 try {
                     Properties checkerProperties = healthChecker.checkHealth();

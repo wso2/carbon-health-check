@@ -16,8 +16,6 @@
 
 package org.wso2.carbon.healthcheck.api.core.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
@@ -91,8 +89,6 @@ public class DataSourceHealthChecker extends AbstractHealthChecker {
 
         List<HealthCheckError> errors = new ArrayList<>();
         Properties cumilativeResults = new Properties();
-        // Will not be using JMX or Mbeans for the time being
-        // Properties datasourcesProperties = checkDataSourcesHealth();
         Properties connectivityProperties;
         try {
             connectivityProperties = testDBConnectivity(errors);
@@ -101,7 +97,6 @@ public class DataSourceHealthChecker extends AbstractHealthChecker {
                     "Error while checking DB connectivity", errors, e);
         }
         cumilativeResults.putAll(connectivityProperties);
-        // CumulativeResults.putAll(datasourcesProperties);
         if (!errors.isEmpty()) {
             throw new BadHealthException("Bad health in data sources", errors);
         }
@@ -129,33 +124,6 @@ public class DataSourceHealthChecker extends AbstractHealthChecker {
             log.info("No integer configured for" + POOL_USAGE_LIMIT_PERCENTAGE + ", configured value is: " +
                     poolHealthyPercentageString + ", Hence defaulting to 80");
         }
-    }
-
-    protected Properties checkDataSourcesHealth(List<HealthCheckError> errors)
-            throws HealthCheckFailedException {
-
-        List<String> dataSourcesMbeans = queryMbeans(DATASOURCE_MBEAN_QUERY_FILTER, errors);
-        // TODO : extract datasource name from Mbean.
-        String datasourceName = "";
-        Properties cumilativeProperties = new Properties();
-        dataSourcesMbeans.forEach(LambdaExceptionUtils.rethrowConsumer(datasourceMbeanName ->
-                cumilativeProperties.putAll(validateDataSourceFromMbeans(datasourceMbeanName, datasourceName, errors))));
-
-        return cumilativeProperties;
-    }
-
-    protected Properties validateDataSourceFromMbeans(String mbeanName, String datasouceName,
-                                                      List<HealthCheckError> errors) throws HealthCheckFailedException {
-
-        Properties properties = new Properties();
-        Object active = getMbeanAttribute(mbeanName, Constants.DataSourcesJMX.ACTIVE);
-        Integer activeCount = getNumber(active);
-        properties.put(mbeanName + "." + Constants.DataSourcesJMX.ACTIVE, activeCount);
-        Object maxActive = getMbeanAttribute(mbeanName, Constants.DataSourcesJMX.MAX_ACTIVE);
-        Integer maxActiveCount = getNumber(maxActive);
-
-        validateAvailableResourceMargin(activeCount, maxActiveCount, datasouceName, errors);
-        return properties;
     }
 
     protected Properties validateDataSource(DataSource dataSource, String datasourceName, List<HealthCheckError>
