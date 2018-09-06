@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.healthcheck.api.core.internal;
 
+import org.wso2.carbon.healthcheck.api.core.CarbonHealthCheckService;
 import org.wso2.carbon.healthcheck.api.core.HealthChecker;
 import org.wso2.carbon.healthcheck.api.core.HealthCheckerComparator;
 import org.wso2.carbon.server.admin.common.IServerAdmin;

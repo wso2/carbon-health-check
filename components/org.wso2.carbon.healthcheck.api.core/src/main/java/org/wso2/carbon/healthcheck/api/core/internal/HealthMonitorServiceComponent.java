@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.healthcheck.api.core.internal;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
@@ -23,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.wso2.carbon.healthcheck.api.core.CarbonHealthCheckService;
 import org.wso2.carbon.healthcheck.api.core.HealthChecker;
 import org.wso2.carbon.healthcheck.api.core.impl.DataSourceHealthChecker;
 import org.wso2.carbon.healthcheck.api.core.impl.ServerStartupChecker;
@@ -43,6 +45,8 @@ public class HealthMonitorServiceComponent {
     protected void activate(ComponentContext ctxt) {
 
         try {
+            ctxt.getBundleContext().registerService(CarbonHealthCheckService.class.getName(),
+                    CarbonHealthCheckService.getInstance(), null);
             ctxt.getBundleContext().registerService(HealthChecker.class.getName(),
                     new ServerStartupChecker(), null);
             ctxt.getBundleContext().registerService(HealthChecker.class.getName(),
@@ -52,7 +56,7 @@ public class HealthMonitorServiceComponent {
             log.info("Carbon health monitoring service is activated..");
         } catch (Throwable e) {
             // Catching throwable to avoid retrying to initiate component.
-            log.error("Failed to activate ServerAdmin bundle", e);
+            log.error("Failed to activate carbon health check bundle", e);
         }
     }
 
@@ -68,6 +72,15 @@ public class HealthMonitorServiceComponent {
         HealthCheckerConfig healthCheckerConfig = HealthCheckConfigParser.getInstance().
                 getHealthCheckerConfigMap().get(healthChecker.getName());
 
+        if (healthChecker == null && StringUtils.isEmpty(healthChecker.getName())) {
+            if (log.isDebugEnabled()) {
+                log.debug("Null health checkers or a health checker without name are not registered.");
+            }
+            return;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Registering health checker: " + healthChecker.getName());
+        }
         if (healthCheckerConfig == null) {
             healthCheckerConfig = new HealthCheckerConfig(healthChecker.getName());
         }

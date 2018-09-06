@@ -36,6 +36,19 @@ import java.util.Properties;
 public class CarbonHealthCheckService {
 
     private static final Log log = LogFactory.getLog(CarbonHealthCheckService.class);
+    private static CarbonHealthCheckService instance = new CarbonHealthCheckService();
+
+    /**
+     * To make it singleton
+     */
+    private CarbonHealthCheckService() {
+
+    }
+
+    public static CarbonHealthCheckService getInstance() {
+
+        return instance;
+    }
 
     /**
      * @return Properties which are returned by HealthChecker implementation.
