@@ -2,6 +2,7 @@ package org.wso2.carbon.healthcheck.api.endpoint.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.healthcheck.api.endpoint.exception.BadHealthException;
 import org.wso2.carbon.healthcheck.api.core.CarbonHealthCheckService;
 import org.wso2.carbon.healthcheck.api.core.exception.HealthCheckError;
@@ -25,7 +26,11 @@ public class HealthApiServiceImpl extends HealthApiService {
     @Override
     public Response healthGet() {
 
-        CarbonHealthCheckService carbonHealthCheckService = new CarbonHealthCheckService();
+        CarbonHealthCheckService carbonHealthCheckService = getCarbonHealthCheckService();
+        if (carbonHealthCheckService == null) {
+            log.info("Carbon Health Check Service is not found from endpoint. Hence returning");
+            return Response.ok().build();
+        }
         try {
             HealthCheckResponseDTO responseDTO = getHealthCheckResponseDTO(carbonHealthCheckService);
             return Response.ok().entity(responseDTO).build();
@@ -68,5 +73,11 @@ public class HealthApiServiceImpl extends HealthApiService {
         });
         responseDTO.setHealth(responseProperties);
         return responseDTO;
+    }
+
+    private static CarbonHealthCheckService getCarbonHealthCheckService() {
+
+        return (CarbonHealthCheckService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
+                .getOSGiService(CarbonHealthCheckService.class, null);
     }
 }
