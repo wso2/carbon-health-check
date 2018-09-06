@@ -17,13 +17,14 @@
   ~  */
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.healthcheck</groupId>
         <artifactId>org.wso2.carbon.healthcheck.parent</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -34,12 +35,12 @@
         <plugins>
             <!-- Plugin for generating the swagger server stubs run with  mvn swagger2cxf:generate-->
             <!--<plugin>-->
-                <!--<groupId>org.wso2.maven.plugins</groupId>-->
-                <!--<artifactId>swagger2cxf-maven-plugin</artifactId>-->
-                <!--<version>1.0-SNAPSHOT</version>-->
-                <!--<configuration>-->
-                    <!--<inputSpec>${project.basedir}/src/main/resources/health-check.yaml</inputSpec>-->
-                <!--</configuration>-->
+            <!--<groupId>org.wso2.maven.plugins</groupId>-->
+            <!--<artifactId>swagger2cxf-maven-plugin</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+            <!--<configuration>-->
+            <!--<inputSpec>${project.basedir}/src/main/resources/health-check.yaml</inputSpec>-->
+            <!--</configuration>-->
             <!--</plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
