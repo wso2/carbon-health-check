@@ -31,6 +31,7 @@ import org.wso2.carbon.healthcheck.api.core.util.Utils;
 import org.wso2.carbon.ndatasource.common.DataSourceException;
 import org.wso2.carbon.ndatasource.core.CarbonDataSource;
 import org.wso2.carbon.ndatasource.core.DataSourceManager;
+import org.wso2.carbon.ndatasource.core.JNDIConfig;
 
 import java.lang.management.ManagementFactory;
 import java.sql.Connection;
@@ -232,24 +233,43 @@ public class DataSourceHealthChecker extends AbstractHealthChecker {
             allDataSources.forEach(LambdaExceptionUtils.rethrowConsumer(datasource -> {
 
                 Properties connectivityProperties = new Properties();
-                String name = datasource.getDSMInfo().getJndiConfig().getName();
-                // Return without processing if this datasource is not defined under monitored datasources.
-                if (!isDataSourceMonitored(name)) {
+                JNDIConfig dataSourceJNDIConfig = datasource.getDSMInfo().getJndiConfig();
+                // There is no jndi config in InMemory datasource. Therefore we are doing a null check here
+                if (dataSourceJNDIConfig == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(datasource.getDSMInfo().getName() + " does not have JNDI Configuration." +
+                                " Therefore health check is not evaluated ");
+                    }
                     return;
-                }
-                try {
+                } else {
+                    String name = dataSourceJNDIConfig.getName();
+                    // Return without processing if this datasource is not defined under monitored datasources.
+                    if (!isDataSourceMonitored(name)) {
+                        return;
+                    }
+                    try {
 
-                    DataSource dataSource = (DataSource) finalCtx.lookup(name);
-                    long startTime = System.currentTimeMillis();
+                        DataSource dataSource = (DataSource) finalCtx.lookup(name);
+                        long startTime = System.currentTimeMillis();
 
-                    // Connection will not be used since it's used to validate connectivity.
-                    try (Connection connection = dataSource.getConnection()) {
-                        connectivityProperties.put(name + CONNECTIVITY_TIME_IN_MS,
-                                System.currentTimeMillis() - startTime);
-                        Properties datasourceProperties = validateDataSource(dataSource, name, errors);
-                        connectivityProperties.putAll(datasourceProperties);
-                    } catch (Throwable e) {
-                        // Catching throwable since all types of errors must be captured.
+                        // Connection will not be used since it's used to validate connectivity.
+                        try (Connection connection = dataSource.getConnection()) {
+                            connectivityProperties.put(name + CONNECTIVITY_TIME_IN_MS,
+                                    System.currentTimeMillis() - startTime);
+                            Properties datasourceProperties = validateDataSource(dataSource, name, errors);
+                            connectivityProperties.putAll(datasourceProperties);
+                        } catch (Throwable e) {
+                            // Catching throwable since all types of errors must be captured.
+                            if (log.isDebugEnabled()) {
+                                log.debug("Error while getting database connection for " +
+                                        "datasource: " + name, e);
+                            }
+                            errors.add(new HealthCheckError(Constants.ErrorCodes.ERROR_DATA_SOURCE_CONNECTIVITY,
+                                    "Error while getting database connection for " +
+                                            "datasource: " + name, Utils.getRootCauseMessage(e)));
+                        }
+
+                    } catch (NamingException e) {
                         if (log.isDebugEnabled()) {
                             log.debug("Error while getting database connection for " +
                                     "datasource: " + name, e);
@@ -259,17 +279,8 @@ public class DataSourceHealthChecker extends AbstractHealthChecker {
                                         "datasource: " + name, Utils.getRootCauseMessage(e)));
                     }
 
-                } catch (NamingException e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Error while initializing Naming context for " +
-                                "datasource: " + name, e);
-                    }
-                    errors.add(new HealthCheckError(Constants.ErrorCodes.ERROR_DATA_SOURCE_CONNECTIVITY,
-                            "Error while initializing Naming context for " +
-                                    "datasource: " + name, Utils.getRootCauseMessage(e)));
+                    cumulativeProperties.putAll(connectivityProperties);
                 }
-
-                cumulativeProperties.putAll(connectivityProperties);
             }));
         } catch (DataSourceException e) {
             throw new HealthCheckFailedException("Error while retrieving all datasources", e);
