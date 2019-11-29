@@ -30,7 +30,7 @@
     <groupId>org.wso2.carbon.healthcheck</groupId>
     <artifactId>org.wso2.carbon.healthcheck.parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.5</version>
 
     <modules>
         <module>components/org.wso2.carbon.healthcheck.api.core</module>
@@ -42,7 +42,7 @@
         <url>https://github.com/wso2/carbon-health-check.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-health-check.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-health-check.git</connection>
-        <tag>HEAD</tag>
+        <tag>v1.0.5</tag>
     </scm>
 
     <repositories>
