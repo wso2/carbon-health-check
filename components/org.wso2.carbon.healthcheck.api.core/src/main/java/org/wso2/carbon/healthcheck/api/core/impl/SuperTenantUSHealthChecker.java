@@ -44,11 +44,14 @@ import java.util.Properties;
 public class SuperTenantUSHealthChecker extends AbstractHealthChecker {
 
     private static final Log log = LogFactory.getLog(SuperTenantUSHealthChecker.class);
+
     private static final String MONITORED_USER_STORES = "monitored.user.stores";
+    private static final String USER_STORE_HEALTH = ".userstore.health";
+
     private List<String> monitoredUserStores = new ArrayList<>();
     private boolean monitorAllUserStores = true;
     private static final String DISABLED = "Disabled";
-    private static final String TEST_USER = "testUser";
+    private static final String DUMMY_ROLE = "dummy_role";
 
     @Override
     public String getName() {
@@ -86,7 +89,7 @@ public class SuperTenantUSHealthChecker extends AbstractHealthChecker {
             Arrays.stream(secondaryUSM).forEach(LambdaExceptionUtils.rethrowConsumer(secondaryDomain -> {
                 org.wso2.carbon.user.core.UserStoreManager secUSM = userStoreManager
                         .getSecondaryUserStoreManager(secondaryDomain);
-                validateUSM(secUSM, secondaryDomain, errors);
+                validateUSM(secUSM, secondaryDomain, properties, errors);
             }));
         } catch (UserStoreException e) {
             throw new BadHealthException(Constants.ErrorCodes.ERROR_LISTING_USERSTORES,
@@ -121,23 +124,61 @@ public class SuperTenantUSHealthChecker extends AbstractHealthChecker {
 
             } while (secondaryRealmConfiguration != null);
         }
-        return userstores.toArray(new String[userstores.size()]);
+        return userstores.toArray(new String[0]);
     }
 
+    /**
+     * This method was deprecated in favor of {@link #validateUSM(UserStoreManager, String, Properties,
+     * List<HealthCheckError>) validateUSM} method which adds the health status of the userstore to the
+     * {@code properties}.
+     *
+     * @param userStoreManager The userstore manager.
+     * @param domainName The domain name.
+     * @param errors The list of errors to be populated on an encounter with an error during the health check.
+     */
+    @Deprecated
     protected void validateUSM(UserStoreManager userStoreManager, String domainName, List<HealthCheckError> errors) {
 
         if (!isUserStoreMonitored(domainName)) {
             return;
         }
         try {
-            userStoreManager.isExistingRole(TEST_USER);
+            userStoreManager.isExistingRole(DUMMY_ROLE);
         } catch (Throwable e) {
             // Catching throwable since all kinds of errors must be captured including runtime ones.
             if (log.isDebugEnabled()) {
                 log.debug("Error while checking existence of user in user store " + domainName, e);
             }
-            errors.add(new HealthCheckError(Constants.ErrorCodes.ERROR_USERSTORE_CONNECTIVITY_BY_IS_USER_EXISTING
-                    , "Error while checking health of USM with domain: " + domainName,
+            errors.add(new HealthCheckError(Constants.ErrorCodes.ERROR_USERSTORE_CONNECTIVITY_BY_IS_USER_EXISTING,
+                    "Error while checking health of USM with domain: " + domainName,
+                    Utils.getRootCauseMessage(e)));
+        }
+    }
+
+    /**
+     * Check the health of the userstore.
+     *
+     * @param userStoreManager The userstore manager.
+     * @param domainName The domain name.
+     * @param properties The set of properties to be populated on confirming the status of the userstore.
+     * @param errors The list of errors to be populated on an encounter with an error during the health check.
+     */
+    protected void validateUSM(UserStoreManager userStoreManager, String domainName, Properties properties,
+                               List<HealthCheckError> errors) {
+
+        if (!isUserStoreMonitored(domainName)) {
+            return;
+        }
+        try {
+            userStoreManager.isExistingRole(DUMMY_ROLE);
+            properties.put(domainName + USER_STORE_HEALTH, "healthy");
+        } catch (Throwable e) {
+            // Catching throwable since all kinds of errors must be captured including runtime ones.
+            if (log.isDebugEnabled()) {
+                log.debug("Error while checking existence of user in user store " + domainName, e);
+            }
+            errors.add(new HealthCheckError(Constants.ErrorCodes.ERROR_USERSTORE_CONNECTIVITY_BY_IS_USER_EXISTING,
+                    "Error while checking health of USM with domain: " + domainName,
                     Utils.getRootCauseMessage(e)));
         }
     }
