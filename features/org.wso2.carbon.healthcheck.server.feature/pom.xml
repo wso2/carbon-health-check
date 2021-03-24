@@ -70,14 +70,6 @@
                                     <outputDirectory>${basedir}/src/main/resources/</outputDirectory>
                                     <destFileName>api#health-check#v1.0.war</destFileName>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.healthcheck</groupId>
-                                    <artifactId>org.wso2.carbon.healthcheck.api.endpoint</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${basedir}/src/main/resources/api_resources</outputDirectory>
-                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
