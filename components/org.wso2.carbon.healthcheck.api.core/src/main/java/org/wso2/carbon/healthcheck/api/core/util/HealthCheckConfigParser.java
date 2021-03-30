@@ -18,8 +18,10 @@ package org.wso2.carbon.healthcheck.api.core.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.healthcheck.api.core.Constants;
 import org.wso2.carbon.healthcheck.api.core.model.HealthCheckerConfig;
 import org.wso2.carbon.utils.CarbonUtils;
 
@@ -54,6 +56,9 @@ public class HealthCheckConfigParser {
     private final static Log log = LogFactory.getLog(HealthCheckConfigParser.class);
     private static HealthCheckConfigParser instance = new HealthCheckConfigParser();
     private Map<String, HealthCheckerConfig> healthCheckerConfigMap = new HashMap<>();
+    private boolean isMemoryLoggerServiceEnabled = false;
+    private int memoryLoggerWait = Constants.MemoryUsageLoggerConfig.DEFAULT_WAIT_SECONDS;;
+    private int memoryLoggerInterval = Constants.MemoryUsageLoggerConfig.DEFAULT_INTERVAL_SECONDS;
 
     public Map<String, HealthCheckerConfig> getHealthCheckerConfigMap() {
 
@@ -120,6 +125,8 @@ public class HealthCheckConfigParser {
 
             OMElement carbonHealthCheckConfigs = rootElement.getFirstChildWithName(
                     new QName(DEFAULT_NAMESPACE, "CarbonHealthCheckConfigs"));
+            OMElement carbonMemoryLoggerConfigs = carbonHealthCheckConfigs.getFirstChildWithName(
+                    new QName(DEFAULT_NAMESPACE, "CarbonMemoryLoggerConfigs"));
 
             if (carbonHealthCheckConfigs == null) {
                 if (log.isDebugEnabled()) {
@@ -129,6 +136,11 @@ public class HealthCheckConfigParser {
                 return;
             }
             evaluateHealthCheckEnabled(carbonHealthCheckConfigs);
+            if (carbonMemoryLoggerConfigs != null) {
+                evaluateMemoryLoggerEnabled(carbonMemoryLoggerConfigs);
+                getMemoryLoggerInterval(carbonMemoryLoggerConfigs);
+                getMemoryLoggerWait(carbonMemoryLoggerConfigs);
+            }
 
             buildHealthCheckerConfigs(carbonHealthCheckConfigs.getFirstChildWithName(new QName(DEFAULT_NAMESPACE,
                     HEALTH_CHECKERS)));
@@ -155,6 +167,48 @@ public class HealthCheckConfigParser {
             return;
         }
         isHealthCheckServiceEnabled = Boolean.parseBoolean(enableConfig.getText());
+    }
+
+    private void evaluateMemoryLoggerEnabled(OMElement memoryLoggerConfigs) {
+
+        OMElement enableConfig = memoryLoggerConfigs.getFirstChildWithName
+                (new QName(DEFAULT_NAMESPACE, "Enable"));
+        if (enableConfig == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No enable config found, Hence memory logger service is disabled.");
+            }
+            return;
+        }
+        isMemoryLoggerServiceEnabled = Boolean.parseBoolean(enableConfig.getText());
+    }
+
+    private void getMemoryLoggerWait(OMElement memoryLoggerConfigs) {
+
+        OMElement waitConfig = memoryLoggerConfigs.getFirstChildWithName
+                (new QName(DEFAULT_NAMESPACE, "Wait"));
+        if (waitConfig == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No config found memory logger wait, Hence default value will be used.");
+            }
+
+        }
+        if (StringUtils.isNotEmpty(waitConfig.getText())) {
+            memoryLoggerWait = Integer.parseInt(waitConfig.getText());
+        }
+    }
+
+    private void getMemoryLoggerInterval(OMElement memoryLoggerConfigs) {
+
+        OMElement intervalConfig = memoryLoggerConfigs.getFirstChildWithName
+                (new QName(DEFAULT_NAMESPACE, "Interval"));
+        if (intervalConfig == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No config found memory logger interval, Hence default value will be used.");
+            }
+        }
+        if (StringUtils.isNotEmpty(intervalConfig.getText())) {
+            memoryLoggerInterval = Integer.parseInt(intervalConfig.getText());
+        }
     }
 
     private void buildHealthCheckerConfigs(OMElement configs) {
@@ -197,5 +251,20 @@ public class HealthCheckConfigParser {
     public boolean isHealthCheckServiceEnabled() {
 
         return isHealthCheckServiceEnabled;
+    }
+
+    public boolean isMemoryLoggerServiceEnabled() {
+
+        return isMemoryLoggerServiceEnabled;
+    }
+
+    public int getMemoryLoggerWait() {
+
+        return memoryLoggerWait;
+    }
+
+    public int getMemoryLoggerInterval() {
+
+        return memoryLoggerInterval;
     }
 }
