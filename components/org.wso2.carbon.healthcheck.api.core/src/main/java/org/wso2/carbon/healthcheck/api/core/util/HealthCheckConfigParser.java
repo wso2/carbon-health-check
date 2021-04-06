@@ -57,7 +57,6 @@ public class HealthCheckConfigParser {
     private static HealthCheckConfigParser instance = new HealthCheckConfigParser();
     private Map<String, HealthCheckerConfig> healthCheckerConfigMap = new HashMap<>();
     private boolean isMemoryLoggerServiceEnabled = false;
-    private int memoryLoggerWait = Constants.MemoryUsageLoggerConfig.DEFAULT_WAIT_SECONDS;;
     private int memoryLoggerInterval = Constants.MemoryUsageLoggerConfig.DEFAULT_INTERVAL_SECONDS;
 
     public Map<String, HealthCheckerConfig> getHealthCheckerConfigMap() {
@@ -139,7 +138,6 @@ public class HealthCheckConfigParser {
             if (carbonMemoryLoggerConfigs != null) {
                 evaluateMemoryLoggerEnabled(carbonMemoryLoggerConfigs);
                 getMemoryLoggerInterval(carbonMemoryLoggerConfigs);
-                getMemoryLoggerWait(carbonMemoryLoggerConfigs);
             }
 
             buildHealthCheckerConfigs(carbonHealthCheckConfigs.getFirstChildWithName(new QName(DEFAULT_NAMESPACE,
@@ -180,21 +178,6 @@ public class HealthCheckConfigParser {
             return;
         }
         isMemoryLoggerServiceEnabled = Boolean.parseBoolean(enableConfig.getText());
-    }
-
-    private void getMemoryLoggerWait(OMElement memoryLoggerConfigs) {
-
-        OMElement waitConfig = memoryLoggerConfigs.getFirstChildWithName
-                (new QName(DEFAULT_NAMESPACE, "Wait"));
-        if (waitConfig == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("No config found memory logger wait, Hence default value will be used.");
-            }
-
-        }
-        if (StringUtils.isNotEmpty(waitConfig.getText())) {
-            memoryLoggerWait = Integer.parseInt(waitConfig.getText());
-        }
     }
 
     private void getMemoryLoggerInterval(OMElement memoryLoggerConfigs) {
@@ -256,11 +239,6 @@ public class HealthCheckConfigParser {
     public boolean isMemoryLoggerServiceEnabled() {
 
         return isMemoryLoggerServiceEnabled;
-    }
-
-    public int getMemoryLoggerWait() {
-
-        return memoryLoggerWait;
     }
 
     public int getMemoryLoggerInterval() {

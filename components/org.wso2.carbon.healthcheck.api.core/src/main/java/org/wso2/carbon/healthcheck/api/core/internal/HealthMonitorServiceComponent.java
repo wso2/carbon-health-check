@@ -74,13 +74,15 @@ public class HealthMonitorServiceComponent {
 
     private void startJvmMemoryLogger() {
 
-        javaMemoryUsageLogger = new JavaMemoryUsageLogger(HealthCheckConfigParser.getInstance().
-                getMemoryLoggerWait(), HealthCheckConfigParser.getInstance().getMemoryLoggerInterval());
+        javaMemoryUsageLogger = new JavaMemoryUsageLogger(HealthCheckConfigParser.getInstance().getMemoryLoggerInterval());
         if (HealthCheckConfigParser.getInstance().isMemoryLoggerServiceEnabled()) {
             if (log.isDebugEnabled()) {
                 log.debug("Memory logging service is starting.");
             }
             javaMemoryUsageLogger.start();
+            if (log.isDebugEnabled()) {
+                log.debug("Memory logging service is started.");
+            }
         }
     }
 

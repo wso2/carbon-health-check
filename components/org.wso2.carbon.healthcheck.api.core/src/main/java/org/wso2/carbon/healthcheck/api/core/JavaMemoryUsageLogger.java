@@ -19,7 +19,10 @@ package org.wso2.carbon.healthcheck.api.core;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.lang.management.*;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.EnumMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,44 +34,45 @@ import java.util.concurrent.TimeUnit;
  */
 public class JavaMemoryUsageLogger {
 
-    static int BYTES_PER_MB = 1024 * 1000;
+    private static final int BYTES_PER_MB = 1024 * 1000;
     private static MemoryMXBean memoryMXBean;
 
     private static final Log log = LogFactory.getLog(JavaMemoryUsageLogger.class);
-    int wait = Constants.MemoryUsageLoggerConfig.DEFAULT_WAIT_SECONDS;
-    int interval = Constants.MemoryUsageLoggerConfig.DEFAULT_INTERVAL_SECONDS;
-    ScheduledExecutorService ses;
-    ScheduledFuture<?> scheduledFuture;
+    private int delaySecondsBeforeStarting = Constants.MemoryUsageLoggerConfig.DEFAULT_WAIT_SECONDS;
+    private int loggerPrintingInterval = Constants.MemoryUsageLoggerConfig.DEFAULT_INTERVAL_SECONDS;
+    private ScheduledExecutorService memoryLogScheduler;
+    private ScheduledFuture<MemoryUsageReporter> scheduledFuture;
 
     public JavaMemoryUsageLogger() {
 
     }
 
-    public JavaMemoryUsageLogger(int wait, int interval) {
+    public JavaMemoryUsageLogger(int loggerPrintingInterval) {
 
-        this.wait = wait;
-        this.interval = interval;
-        ses = Executors.newScheduledThreadPool(1);
+        this.loggerPrintingInterval = loggerPrintingInterval;
+        this.delaySecondsBeforeStarting = loggerPrintingInterval * 2;
+        memoryLogScheduler = Executors.newScheduledThreadPool(1);
     }
 
     public void start() {
 
         memoryMXBean = ManagementFactory.getMemoryMXBean();
-        scheduledFuture = ses.scheduleAtFixedRate(new Reporter(), wait, interval, TimeUnit.SECONDS);
+        scheduledFuture = (ScheduledFuture<MemoryUsageReporter>) memoryLogScheduler.
+                scheduleAtFixedRate(new MemoryUsageReporter(), delaySecondsBeforeStarting, loggerPrintingInterval, TimeUnit.SECONDS);
     }
 
     public void stop() {
 
         if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
-            ses.shutdown();
+            memoryLogScheduler.shutdown();
         }
     }
 
     /**
-     * Class to log memory utilization periodically.
+     * Memory Usage Reporter.
      */
-    public static class Reporter implements Runnable {
+    public static class MemoryUsageReporter implements Runnable {
 
         enum Attribute {
             heap_memory_used_mb("Heap Memory Used"),
@@ -94,11 +98,13 @@ public class JavaMemoryUsageLogger {
 
         private void printUserReport(EnumMap<Attribute, Long> attributes) {
 
-            formatAndOutput("JVM Memory Usage     (Heap): used: %dM committed: %dM max:%dM",
-                    attributes.get(Attribute.heap_memory_used_mb), attributes.get(Attribute.heap_memory_committed_mb),
-                    attributes.get(Attribute.heap_memory_max_mb));
-            formatAndOutput("JVM Memory Usage (Non-Heap): used: %dM committed: %dM max:%dM",
-                    attributes.get(Attribute.nonheap_memory_used_mb), attributes.get(Attribute.nonheap_memory_committed_mb),
+            formatAndWrite("JVM Memory Usage: Heap Used: %dM, Heap Committed: %dM, Heap Max: %dM, " +
+                            "Non Heap Used: %dM, Non Heap Committed: %dM, Non Heap Max: %dM",
+                    attributes.get(Attribute.heap_memory_used_mb),
+                    attributes.get(Attribute.heap_memory_committed_mb),
+                    attributes.get(Attribute.heap_memory_max_mb),
+                    attributes.get(Attribute.nonheap_memory_used_mb),
+                    attributes.get(Attribute.nonheap_memory_committed_mb),
                     attributes.get(Attribute.nonheap_memory_max_mb));
         }
 
@@ -117,7 +123,7 @@ public class JavaMemoryUsageLogger {
             return attributes;
         }
 
-        private void formatAndOutput(String fmt, Object... args) {
+        private void formatAndWrite(String fmt, Object... args) {
 
             String msg = String.format(fmt, args);
             log.info(msg);

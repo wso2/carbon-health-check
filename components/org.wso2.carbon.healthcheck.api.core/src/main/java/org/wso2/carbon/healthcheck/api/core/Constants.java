@@ -42,8 +42,8 @@ public class Constants {
 
     public static class MemoryUsageLoggerConfig {
 
-        public static final int DEFAULT_WAIT_SECONDS  = 50;
         public static final int DEFAULT_INTERVAL_SECONDS = 60;
+        public static final int DEFAULT_WAIT_SECONDS  = DEFAULT_INTERVAL_SECONDS * 2;
     }
 
     // Error codes
