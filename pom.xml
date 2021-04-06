@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>1</version>
+        <version>1.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.healthcheck</groupId>
     <artifactId>org.wso2.carbon.healthcheck.parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.2.8-SNAPSHOT</version>
 
     <modules>
         <module>components/org.wso2.carbon.healthcheck.api.core</module>
@@ -160,19 +160,6 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>${maven.war.plugin.version}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-scr-plugin</artifactId>
-                    <version>${maven.scr.plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>generate-scr-scrdescriptor</id>
-                            <goals>
-                                <goal>scr</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -194,12 +181,33 @@
                 <inherited>true</inherited>
                 <configuration>
                     <encoding>UTF-8</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
                 <version>${maven.buildnumber.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <!--This parameter disables doclint-->
+                            <doclint>none</doclint>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -222,9 +230,9 @@
                 <version>${equinox.osgi.services.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.logging</artifactId>
-                <version>${carbon.kernel.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -248,9 +256,14 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.9.7</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.ws.rs</groupId>
-                <artifactId>jsr311-api</artifactId>
-                <version>${jaxrx.jsr311.api.version}</version>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${javax.ws.rs.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -273,9 +286,9 @@
                 <version>${org.codehaus.jackson.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>${org.codehaus.jackson.version}</version>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
@@ -330,21 +343,21 @@
         <carbon.healthcheck.version>${project.version}</carbon.healthcheck.version>
         <build.helper.plugin.version>3.0.0</build.helper.plugin.version>
         <org.codehaus.jackson.version>1.8.6</org.codehaus.jackson.version>
-        <org.apache.cxf.version>3.2.2</org.apache.cxf.version>
+        <jackson-databind.version>2.10.5</jackson-databind.version>
+        <org.apache.cxf.version>3.3.7</org.apache.cxf.version>
         <springframework.version>4.3.14.RELEASE</springframework.version>
-        <jaxrx.jsr311.api.version>1.1.1</jaxrx.jsr311.api.version>
-        <swagger.jaxrs.version>1.5.2</swagger.jaxrs.version>
+        <javax.ws.rs.api.version>2.1.1</javax.ws.rs.api.version>
+        <swagger.jaxrs.version>1.6.2</swagger.jaxrs.version>
         <maven.war.plugin.version>2.2</maven.war.plugin.version>
-        <maven.scr.plugin.version>1.24.0</maven.scr.plugin.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
         <apache.felix.scr.ds.annotations.version>1.2.8</apache.felix.scr.ds.annotations.version>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <version.equinox.osgi>3.9.1.v20130814-1242</version.equinox.osgi>
-        <carbon.kernel.version>4.4.20</carbon.kernel.version>
+        <carbon.kernel.version>4.5.0</carbon.kernel.version>
         <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <osgi.service.component.imp.pkg.version.range>[1.2.0, 2.0.0)</osgi.service.component.imp.pkg.version.range>
-        <carbon.kernel.package.import.version.range>[4.4.0, 5.0.0)</carbon.kernel.package.import.version.range>
+        <carbon.kernel.package.import.version.range>[4.5.0, 5.0.0)</carbon.kernel.package.import.version.range>
         <osgi.framework.imp.pkg.version.range>[1.7.0, 2.0.0)</osgi.framework.imp.pkg.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <commons-lang.wso2.osgi.version.range>[2.6.0,3.0.0)</commons-lang.wso2.osgi.version.range>
@@ -356,5 +369,6 @@
         <powermock.version>1.6.6</powermock.version>
         <jacoco.version>0.7.9</jacoco.version>
         <maven.surefire.plugin.version>2.20</maven.surefire.plugin.version>
+        <pax.logging.api.version>1.10.1</pax.logging.api.version>
     </properties>
 </project>
