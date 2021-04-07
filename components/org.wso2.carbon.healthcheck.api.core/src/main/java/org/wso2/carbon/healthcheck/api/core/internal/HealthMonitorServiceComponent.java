@@ -25,6 +25,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.healthcheck.api.core.CarbonHealthCheckService;
+import org.wso2.carbon.healthcheck.api.core.JavaMemoryUsageLogger;
 import org.wso2.carbon.healthcheck.api.core.HealthChecker;
 import org.wso2.carbon.healthcheck.api.core.impl.DataSourceHealthChecker;
 import org.wso2.carbon.healthcheck.api.core.impl.ServerStartupChecker;
@@ -42,6 +43,8 @@ public class HealthMonitorServiceComponent {
 
     private static final Log log = LogFactory.getLog(HealthMonitorServiceComponent.class);
 
+    private JavaMemoryUsageLogger javaMemoryUsageLogger;
+
     protected void activate(ComponentContext ctxt) {
 
         try {
@@ -51,12 +54,45 @@ public class HealthMonitorServiceComponent {
                     new ServerStartupChecker(), null);
             ctxt.getBundleContext().registerService(HealthChecker.class.getName(),
                     new DataSourceHealthChecker(), null);
+            startJvmMemoryLogger();
             ctxt.getBundleContext().registerService(HealthChecker.class.getName(), new SuperTenantUSHealthChecker(),
                     null);
             log.info("Carbon health monitoring service is activated..");
         } catch (Throwable e) {
             // Catching throwable to avoid retrying to initiate component.
             log.error("Failed to activate carbon health check bundle", e);
+        }
+    }
+
+    protected void deactivate(ComponentContext context) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Health Monitor bundle is deactivated");
+        }
+        stopJvmMemoryLogger();
+    }
+
+    private void startJvmMemoryLogger() {
+
+        javaMemoryUsageLogger = new JavaMemoryUsageLogger(HealthCheckConfigParser.getInstance().getMemoryLoggerInterval());
+        if (HealthCheckConfigParser.getInstance().isMemoryLoggerServiceEnabled()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Memory logging service is starting.");
+            }
+            javaMemoryUsageLogger.start();
+            if (log.isDebugEnabled()) {
+                log.debug("Memory logging service is started.");
+            }
+        }
+    }
+
+    private void stopJvmMemoryLogger() {
+
+        if (javaMemoryUsageLogger != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Memory logging service is stopping.");
+            }
+            javaMemoryUsageLogger.stop();
         }
     }
 
