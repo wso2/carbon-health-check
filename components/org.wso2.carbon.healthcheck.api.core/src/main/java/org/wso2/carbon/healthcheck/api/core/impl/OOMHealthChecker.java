@@ -57,8 +57,8 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
- * This HealthChecker will check the health of data sources which are configured in master-datasources by checking
- * the connection pool information and by getting a connection from the pool.
+ * This HealthChecker will check the health of the Heap Memory to validate if 
+ * platform if the error Out Of Memory happened checking the Heap Memory through the MemoryMXBean
  */
 public class OOMHealthChecker extends AbstractHealthChecker {
 
