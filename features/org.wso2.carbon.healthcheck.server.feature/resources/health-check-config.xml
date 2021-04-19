@@ -29,7 +29,7 @@
             <HealthChecker name="SuperTenantUSHealthChecker" orderId="98" enable="true">
                 <!--<Property name="monitored.user.stores">primary,sec</Property>-->
             </HealthChecker>
-            <HealthChecker name="OOMHealthChecker" orderId="99" enable="true">
+            <HealthChecker name="OOMHealthChecker" orderId="99" enable="false">
             </HealthChecker>
         </HealthCheckers>
 
