@@ -48,5 +48,6 @@ public class Constants {
         public static final String ERROR_USERSTORE_CONNECTIVITY_BY_IS_USER_EXISTING = "HC_00003";
         public static final String ERROR_SERVER_STATUS_NOT_RUNNING = "HC_00004";
         public static final String ERROR_LISTING_USERSTORES = "HC_00005";
+        public static final String ERROR_OOM = "HC_00006";
     }
 }
