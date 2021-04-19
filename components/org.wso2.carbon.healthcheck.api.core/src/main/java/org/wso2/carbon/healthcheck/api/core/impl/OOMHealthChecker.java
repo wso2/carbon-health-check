@@ -65,7 +65,6 @@ public class OOMHealthChecker extends AbstractHealthChecker {
     private static final Log log = LogFactory.getLog(OOMHealthChecker.class);
     private static final String OOM_HEALTH_CHECKER = "OOMHealthChecker";
     private static final String OOM_PROP = "is.out.of.memory";
-    public static final String ERROR_OOM = "OOM_00001";
 
     @Override
     public void init(HealthCheckerConfig healthCheckerConfig) {
