@@ -28,6 +28,7 @@ import org.wso2.carbon.healthcheck.api.core.CarbonHealthCheckService;
 import org.wso2.carbon.healthcheck.api.core.JavaMemoryUsageLogger;
 import org.wso2.carbon.healthcheck.api.core.HealthChecker;
 import org.wso2.carbon.healthcheck.api.core.impl.DataSourceHealthChecker;
+import org.wso2.carbon.healthcheck.api.core.impl.OOMHealthChecker;
 import org.wso2.carbon.healthcheck.api.core.impl.ServerStartupChecker;
 import org.wso2.carbon.healthcheck.api.core.impl.SuperTenantUSHealthChecker;
 import org.wso2.carbon.healthcheck.api.core.model.HealthCheckerConfig;
@@ -54,6 +55,8 @@ public class HealthMonitorServiceComponent {
                     new ServerStartupChecker(), null);
             ctxt.getBundleContext().registerService(HealthChecker.class.getName(),
                     new DataSourceHealthChecker(), null);
+            ctxt.getBundleContext().registerService(HealthChecker.class.getName(),
+            		new OOMHealthChecker(), null);
             startJvmMemoryLogger();
             ctxt.getBundleContext().registerService(HealthChecker.class.getName(), new SuperTenantUSHealthChecker(),
                     null);
