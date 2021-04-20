@@ -40,6 +40,12 @@ public class Constants {
         public final static String PROPERTY_NAME = "name";
     }
 
+    public static class MemoryUsageLoggerConfig {
+
+        public static final int DEFAULT_INTERVAL_SECONDS = 60;
+        public static final int DEFAULT_WAIT_SECONDS  = DEFAULT_INTERVAL_SECONDS * 2;
+    }
+
     // Error codes
     public static class ErrorCodes {
 

@@ -30,7 +30,7 @@
     <groupId>org.wso2.carbon.healthcheck</groupId>
     <artifactId>org.wso2.carbon.healthcheck.parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.8-SNAPSHOT</version>
+    <version>1.2.9-SNAPSHOT</version>
 
     <modules>
         <module>components/org.wso2.carbon.healthcheck.api.core</module>
