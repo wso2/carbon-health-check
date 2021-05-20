@@ -44,6 +44,7 @@ public class HealthApiServiceImpl extends HealthApiService {
         List<HealthCheckError> errors = e.getErrors();
         ErrorsDTO errorsResponseDTO = new ErrorsDTO();
         errors.forEach(error -> {
+            log.error(error.getMessage());
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setMessage(error.getMessage());
             errorDTO.setDescription(error.getErrorDescription());
