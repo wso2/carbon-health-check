@@ -270,7 +270,7 @@
         <carbon.healthcheck.version>${project.version}</carbon.healthcheck.version>
         <build.helper.plugin.version>3.0.0</build.helper.plugin.version>
         <org.codehaus.jackson.version>1.8.6</org.codehaus.jackson.version>
-        <jackson-databind.version>2.10.5.1</jackson-databind.version>
+        <jackson-databind.version>2.12.6.1</jackson-databind.version>
         <org.apache.cxf.version>3.3.7</org.apache.cxf.version>
         <springframework.version>4.3.14.RELEASE</springframework.version>
         <javax.ws.rs.api.version>2.1.1</javax.ws.rs.api.version>
