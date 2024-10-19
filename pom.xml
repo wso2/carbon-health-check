@@ -268,15 +268,15 @@
 
     <properties>
         <carbon.healthcheck.version>${project.version}</carbon.healthcheck.version>
-        <build.helper.plugin.version>3.0.0</build.helper.plugin.version>
-        <org.codehaus.jackson.version>1.8.6</org.codehaus.jackson.version>
+        <build.helper.plugin.version>3.3.0</build.helper.plugin.version>
+        <org.codehaus.jackson.version>1.9.13</org.codehaus.jackson.version>
         <jackson-databind.version>2.10.5.1</jackson-databind.version>
         <org.apache.cxf.version>3.3.7</org.apache.cxf.version>
         <springframework.version>4.3.14.RELEASE</springframework.version>
         <javax.ws.rs.api.version>2.1.1</javax.ws.rs.api.version>
         <swagger.jaxrs.version>1.6.2</swagger.jaxrs.version>
-        <maven.war.plugin.version>2.2</maven.war.plugin.version>
-        <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
+        <maven.war.plugin.version>3.3.2</maven.war.plugin.version>
+        <maven.buildnumber.plugin.version>3.2.0</maven.buildnumber.plugin.version>
         <apache.felix.scr.ds.annotations.version>1.2.8</apache.felix.scr.ds.annotations.version>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <version.equinox.osgi>3.9.1.v20130814-1242</version.equinox.osgi>
@@ -294,8 +294,8 @@
 
         <testng.version>6.3.1</testng.version>
         <powermock.version>1.6.6</powermock.version>
-        <jacoco.version>0.7.9</jacoco.version>
-        <maven.surefire.plugin.version>2.20</maven.surefire.plugin.version>
+        <jacoco.version>0.8.8</jacoco.version>
+        <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
         <pax.logging.api.version>1.10.1</pax.logging.api.version>
     </properties>
 </project>
