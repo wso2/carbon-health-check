@@ -6,26 +6,33 @@
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" metadata-complete="true">
     <absolute-ordering />
 
-    <display-name>WSO2 Identity Server Identity Provider Management REST API</display-name>
-    <description>WSO2 Identity Server Identity Provider REST API</description>
-
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>WEB-INF/beans.xml</param-value>
-    </context-param>
-
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
+    <display-name>WSO2 APIM HEALTH CHECK REST API</display-name>
+    <description>WSO2 API Manager Health Check REST API</description>
 
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
         <servlet-class>
-            org.apache.cxf.transport.servlet.CXFServlet
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
         </servlet-class>
         <load-on-startup>1</load-on-startup>
+        
+        <init-param>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                org.wso2.carbon.healthcheck.api.endpoint.HealthApi
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>jaxrs.address</param-name>
+            <param-value>/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jaxrs.providers</param-name>
+            <param-value>
+                com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider,
+                org.wso2.carbon.healthcheck.api.endpoint.expmapper.HealthCheckEndpointExceptionMapper
+            </param-value>
+        </init-param>
     </servlet>
 
     <servlet-mapping>
