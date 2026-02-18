@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.healthcheck.api.core;
 
-import org.powermock.api.mockito.PowerMockito;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -73,8 +73,8 @@ public class CarbonHealthCheckServiceTest {
     @Test
     public void checkHealthWithRunningServerState() throws Exception {
 
-        ServerAdmin serverAdmin = PowerMockito.mock(ServerAdmin.class);
-        PowerMockito.when(serverAdmin.getServerStatus()).thenReturn("RUNNING");
+        ServerAdmin serverAdmin = Mockito.mock(ServerAdmin.class);
+        Mockito.when(serverAdmin.getServerStatus()).thenReturn("RUNNING");
         HealthChecker serverStartupChecker = new ServerStartupChecker();
         HealthMonitorServiceDataHolder.getInstance().addHealthChecker(serverStartupChecker);
         HealthMonitorServiceDataHolder.getInstance().setServerAdmin(serverAdmin);
@@ -84,8 +84,8 @@ public class CarbonHealthCheckServiceTest {
     @Test
     public void checkHealthServerStateWhenNotRunning() throws Exception {
 
-        ServerAdmin serverAdmin = PowerMockito.mock(ServerAdmin.class);
-        PowerMockito.when(serverAdmin.getServerStatus()).thenReturn("NOT-RUNNING");
+        ServerAdmin serverAdmin = Mockito.mock(ServerAdmin.class);
+        Mockito.when(serverAdmin.getServerStatus()).thenReturn("NOT-RUNNING");
         HealthChecker serverStartupChecker = new ServerStartupChecker();
         HealthMonitorServiceDataHolder.getInstance().addHealthChecker(serverStartupChecker);
         HealthMonitorServiceDataHolder.getInstance().setServerAdmin(serverAdmin);

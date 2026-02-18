@@ -16,7 +16,7 @@
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="CarbonHealthCheckCoreTestsSuite" object-factory="org.powermock.modules.testng.PowerMockObjectFactory">
+<suite name="CarbonHealthCheckCoreTestsSuite">
 
     <test name="CarbonHealthCheckCoreTests" preserve-order="true" parallel="false">
         <classes>
